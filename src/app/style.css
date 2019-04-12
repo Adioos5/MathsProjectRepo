@@ -1,0 +1,22 @@
+
+.button {
+    -fx-background-color: #969696;
+    -fx-text-fill: #eeeeee;
+    -fx-font-family: "Verdana";
+    -fx-font-weight: bold;
+
+}
+
+#narysuj:hover{
+     -fx-background-color: #20d895;
+     -fx-text-fill: #000000;
+}
+#wyskaluj:hover{
+    -fx-background-color: #c6f42e;
+    -fx-text-fill: #000000;
+
+}
+#predkosc:hover{
+    -fx-background-color: #e5222c;
+    -fx-text-fill: #eeeeee;
+}
