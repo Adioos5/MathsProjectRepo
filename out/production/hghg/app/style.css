@@ -1,10 +1,30 @@
 
+#appTitle{
+    -fx-font-family: 'Impact';
+}
+
 .button {
     -fx-background-color: #969696;
     -fx-text-fill: #eeeeee;
     -fx-font-family: "Verdana";
     -fx-font-weight: bold;
 
+}
+
+#boardButton{
+    -fx-font-size: 20px;
+}
+
+#boardButton:hover{
+    -fx-background-color: #7c7c7c;
+}
+
+#creditsButton{
+    -fx-font-size: 20px;
+}
+
+#creditsButton:hover{
+    -fx-background-color: #7c7c7c;
 }
 
 #narysuj:hover{

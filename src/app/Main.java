@@ -11,7 +11,7 @@ public class Main extends Application {
     }
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setScene(new Scene(new Menu().showMenu()));
+        stage.setScene(new Scene(new Menu().createRoot()));
         stage.setTitle("Wykresy ciągów");
         stage.setWidth(1200);
         stage.setHeight(600);

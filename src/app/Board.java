@@ -115,7 +115,7 @@ public class Board {
         this.menu = menu;
     }
 
-    public Pane createRoot(){
+    public Pane launchTheBoard(){
 
         //osie
         xLine = new Rectangle( x0,y0,960,2);
