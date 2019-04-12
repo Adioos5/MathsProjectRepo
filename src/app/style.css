@@ -27,6 +27,14 @@
     -fx-background-color: #7c7c7c;
 }
 
+#exitButton{
+    -fx-font-size: 20px;
+}
+
+#exitButton:hover{
+    -fx-background-color: #7c7c7c;
+}
+
 #narysuj:hover{
      -fx-background-color: #20d895;
      -fx-text-fill: #000000;

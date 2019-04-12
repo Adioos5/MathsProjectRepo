@@ -977,7 +977,7 @@ public class Board {
         commandsTxt.setFill(Color.WHITE);
 
         Text commandsContent = new Text("\nsin n - sin(n) | cos n - cos(n) | tg n - tg(n) | log n - log(n)\n\n" +
-                "n² - pow(n,2)   | √n - sqrt(n)    | |n| - abs(n)");
+                "n² - pow(n,2) | √n - sqrt(n) | |n| - abs(n)");
         commandsContent.setFont(Font.font("Verdana",13));
         commandsContent.setX(optionsPanel.getX()+20);
         commandsContent.setY(100);
