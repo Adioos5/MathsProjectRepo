@@ -36,6 +36,10 @@ public class Main extends Application {
     private Rectangle optionsPanel;
     private Rectangle deltaLine;
     private Rectangle limitLine;
+    private Rectangle mLine;
+    private Rectangle mRectUp;
+    private Rectangle mRectDown;
+
     private Rectangle epsilonLine1;
     private Rectangle epsilonLine2;
     private Rectangle epsilonDistanceLine1;
@@ -48,6 +52,7 @@ public class Main extends Application {
     private Text epsilonLetter1;
     private Text epsilonLetter2;
     private Text limitLetter;
+    private Text mLetter;
 
     private TextArea txtArea;
     private TextArea txtArea2;
@@ -76,6 +81,8 @@ public class Main extends Application {
     private double currentX = x0;
     private double currentY = y0;
 
+    private boolean isPlusM = false;
+    private boolean isMinusM = false;
     private boolean blankPoint = false;
     private boolean isAddingLines = true;
     private boolean isAnimating = false;
@@ -344,6 +351,12 @@ public class Main extends Application {
                 epsilonArea2.setX(deltaLine.getX());
 
                 deltaLetter.setX(deltaLine.getX()-3);
+
+                mRectUp.setX(deltaLine.getX());
+                mRectUp.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
+
+                mRectDown.setX(deltaLine.getX());
+                mRectDown.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
             }
         });
         deltaLine.setOnMouseDragged(e->{
@@ -356,6 +369,12 @@ public class Main extends Application {
                 epsilonArea2.setX(deltaLine.getX());
 
                 deltaLetter.setX(deltaLine.getX()-3);
+
+                mRectUp.setX(deltaLine.getX());
+                mRectUp.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
+
+                mRectDown.setX(deltaLine.getX());
+                mRectDown.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
             }
         });
 
@@ -538,6 +557,52 @@ public class Main extends Application {
         epsilonArea2.setX(deltaLine.getX());
         epsilonArea2.setY(limitLine.getY());
 
+        mLine = new Rectangle(960,3,Color.DARKMAGENTA);
+        mLine.setX(x0);
+        mLine.setY(y0);
+        mLine.setOnMousePressed(e->{
+
+            if(e.getY()>50 && e.getY()<530) {
+                mLine.setY(e.getY());
+                mLetter.setX(mLine.getX()+mLine.getWidth()+5);
+                mLetter.setY(mLine.getY()+5);
+
+                mRectUp.setHeight(mLine.getY()-50);
+                mRectDown.setHeight(530-mLine.getY());
+                mRectDown.setY(mLine.getY());
+            }
+        });
+        mLine.setOnMouseDragged(e->{
+
+            if(e.getY()>50 && e.getY()<530) {
+               mLine.setY(e.getY());
+               mLetter.setX(mLine.getX()+mLine.getWidth()+5);
+               mLetter.setY(mLine.getY()+5);
+
+               mRectUp.setHeight(mLine.getY()-50);
+               mRectDown.setHeight(530-mLine.getY());
+               mRectDown.setY(mLine.getY());
+            }
+        });
+
+        mRectUp = new Rectangle(mLine.getX()+mLine.getWidth()-deltaLine.getX(),mLine.getY()-50,Color.DARKMAGENTA);
+        mRectUp.setOpacity(0.2);
+        mRectUp.setX(deltaLine.getX());
+        mRectUp.setY(50);
+
+        mRectDown = new Rectangle(mLine.getX()+mLine.getWidth()-deltaLine.getX(),530-mLine.getY(),Color.DARKMAGENTA);
+        mRectDown.setOpacity(0.2);
+        mRectDown.setX(deltaLine.getX());
+        mRectDown.setY(mLine.getY());
+
+        mLetter = new Text("M");
+        mLetter.setX(mLine.getX()+mLine.getWidth()+5);
+        mLetter.setY(mLine.getY()+5);
+        mLetter.setFill(Color.DARKMAGENTA);
+        mLetter.setFont(Font.font("Monospaced",15));
+
+
+
         zbOpt = new CheckBox("Ciąg zbieżny");
 
         zbOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-180);
@@ -546,16 +611,23 @@ public class Main extends Application {
 
         zbOpt.setOnMouseClicked(e->{
             if(rozbPOpt.isSelected()) {
-                //removeRozbTools();
+                removeRozbPTools();
                 rozbPOpt.setSelected(false);
+                isPlusM = false;
             }
 
             if(rozbMOpt.isSelected()){
+                removeRozbMTools();
                 rozbMOpt.setSelected(false);
+                isMinusM = false;
             }
 
-            if(!root.getChildren().contains(deltaLine)) addZbTools();
-            else removeZbTools();
+            if(!root.getChildren().contains(epsilonLine1)) {
+                refreshZbToolsCoordinates();
+                addZbTools();
+            } else{
+                removeZbTools();
+            }
         });
 
         rozbPOpt = new CheckBox("Ciąg rozbieżny +∞");
@@ -571,9 +643,19 @@ public class Main extends Application {
             }
 
             if(rozbMOpt.isSelected()){
+                removeRozbMTools();
                 rozbMOpt.setSelected(false);
+                isMinusM = false;
             }
 
+            if(!isPlusM){
+                refreshRozbPToolsCoordinates();
+                addRozbPTools();
+                isPlusM = true;
+            } else{
+                removeRozbPTools();
+                isPlusM = false;
+            }
         });
 
         rozbMOpt = new CheckBox("Ciąg rozbieżny -∞");
@@ -588,7 +670,18 @@ public class Main extends Application {
                 zbOpt.setSelected(false);
             }
             if(rozbPOpt.isSelected()){
+                removeRozbPTools();
                 rozbPOpt.setSelected(false);
+                isPlusM = false;
+            }
+
+            if(!isMinusM){
+                refreshRozbMToolsCoordinates();
+                addRozbMTools();
+                isMinusM = true;
+            } else{
+                removeRozbMTools();
+                isMinusM = false;
             }
 
         });
@@ -929,4 +1022,75 @@ public class Main extends Application {
         epsilonArea2.setHeight(epsilonDistanceLine2.getHeight());
     }
 
+    private void addRozbPTools(){
+
+        root.getChildren().add(mLine);
+        root.getChildren().add(mLetter);
+        root.getChildren().add(deltaLine);
+        root.getChildren().add(deltaLetter);
+        root.getChildren().add(mRectUp);
+
+        removeOptionsPanel();
+        generateOptionsPanel();
+    }
+    private void addRozbMTools() {
+        root.getChildren().add(mRectDown);
+        root.getChildren().add(mLine);
+        root.getChildren().add(mLetter);
+        root.getChildren().add(deltaLine);
+        root.getChildren().add(deltaLetter);
+
+        removeOptionsPanel();
+        generateOptionsPanel();
+    }
+    private void removeRozbPTools(){
+
+        refreshRozbPToolsCoordinates();
+
+        root.getChildren().remove(mLine);
+        root.getChildren().remove(mLetter);
+        root.getChildren().remove(deltaLine);
+        root.getChildren().remove(deltaLetter);
+        root.getChildren().remove(mRectUp);
+    }
+    private void removeRozbMTools() {
+
+        refreshRozbMToolsCoordinates();
+
+        root.getChildren().remove(mRectDown);
+        root.getChildren().remove(mLine);
+        root.getChildren().remove(mLetter);
+        root.getChildren().remove(deltaLine);
+        root.getChildren().remove(deltaLetter);
+    }
+
+    private void refreshRozbPToolsCoordinates(){
+        mLine.setX(x0);
+        mLine.setY(y0);
+        deltaLine.setX(60);
+        deltaLine.setY(50);
+        mRectUp.setX(deltaLine.getX());
+        mRectUp.setY(50);
+        mRectUp.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
+        mRectUp.setHeight(mLine.getY()-50);
+        mLetter.setX(mLine.getX()+mLine.getWidth()+5);
+        mLetter.setY(mLine.getY()+5);
+        deltaLetter.setX(deltaLine.getX()-3);
+        deltaLetter.setY(deltaLine.getY()+deltaLine.getHeight()+20);
+    }
+
+    private void refreshRozbMToolsCoordinates(){
+        mLine.setX(x0);
+        mLine.setY(y0);
+        deltaLine.setX(60);
+        deltaLine.setY(50);
+        mRectDown.setX(deltaLine.getX());
+        mRectDown.setY(mLine.getY());
+        mRectDown.setWidth(mLine.getX()+mLine.getWidth()-deltaLine.getX());
+        mRectDown.setHeight(530-mLine.getY());
+        mLetter.setX(mLine.getX()+mLine.getWidth()+5);
+        mLetter.setY(mLine.getY()+5);
+        deltaLetter.setX(deltaLine.getX()-3);
+        deltaLetter.setY(deltaLine.getY()+deltaLine.getHeight()+20);
+    }
 }
