@@ -31,6 +31,8 @@ public class Main extends Application {
 
     private Pane root;
 
+    private Menu menu;
+
     private Rectangle binOverlay;
     private Rectangle hamburgerOverlay;
     private Rectangle optionsPanel;
@@ -39,6 +41,7 @@ public class Main extends Application {
     private Rectangle mLine;
     private Rectangle mRectUp;
     private Rectangle mRectDown;
+    private Rectangle background;
 
     private Rectangle epsilonLine1;
     private Rectangle epsilonLine2;
@@ -46,6 +49,8 @@ public class Main extends Application {
     private Rectangle epsilonDistanceLine2;
     private Rectangle epsilonArea1;
     private Rectangle epsilonArea2;
+    private Rectangle xLine;
+    private Rectangle yLine;
 
     private Text upperText;
     private Text deltaLetter;
@@ -53,6 +58,8 @@ public class Main extends Application {
     private Text epsilonLetter2;
     private Text limitLetter;
     private Text mLetter;
+    private Text xLetter;
+    private Text yLetter;
 
     private TextArea txtArea;
     private TextArea txtArea2;
@@ -64,10 +71,13 @@ public class Main extends Application {
     private Button drawButton;
     private Button scaleButton;
     private Button speedButton;
+    private Button backToMenuButton;
 
     private CheckBox zbOpt;
     private CheckBox rozbPOpt;
     private CheckBox rozbMOpt;
+    private CheckBox paleDesignOpt;
+    private CheckBox darkDesignOpt;
 
     private int scale = 15;
     private int speed = 50;
@@ -86,6 +96,7 @@ public class Main extends Application {
     private boolean blankPoint = false;
     private boolean isAddingLines = true;
     private boolean isAnimating = false;
+    private boolean animationsEnabled = true;
 
     private AnimationTimer timer;
 
@@ -93,6 +104,11 @@ public class Main extends Application {
     private List<Node> listOfPoints = new ArrayList<>();
     private List<Text> listOfNums = new ArrayList<>();
     private List<Node> optionsPanelElements = new ArrayList<>();
+
+    private Color linesColor = Color.WHITE;
+    private Color backgroundColor = Color.BLACK;
+    private Color textColor = Color.WHITE;
+    private Color pointColor = Color.YELLOW;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -102,6 +118,8 @@ public class Main extends Application {
         stage.setHeight(600);
         stage.setResizable(false);
 
+        menu = new Menu((Pane) stage.getScene().getRoot(), this);
+
         root.getStylesheets().add(
                 getClass().getResource("style.css").toExternalForm()
         );
@@ -110,12 +128,17 @@ public class Main extends Application {
 
     }
 
+
+    public Pane lol(){
+
+    }
+
     private Pane createRoot(){
         root = new Pane();
 
         //osie
-        Rectangle xLine = new Rectangle( x0,y0,960,2);
-        Rectangle yLine = new Rectangle(x0,50,2,480);
+        xLine = new Rectangle( x0,y0,960,2);
+        yLine = new Rectangle(x0,50,2,480);
 
         xLine.setFill(Color.WHITE);
         yLine.setFill(Color.WHITE);
@@ -131,6 +154,7 @@ public class Main extends Application {
                         removeUI();
                     }
                     try {
+
                         Thread.currentThread().sleep(speed);
                         drawPoint();
                     } catch (InterruptedException e) {
@@ -155,7 +179,8 @@ public class Main extends Application {
         };
 
         //background
-        root.getChildren().add(new Rectangle(1200,600, Color.BLACK));
+        background = new Rectangle(1200,600, backgroundColor);
+        root.getChildren().add(background);
 
 
         //elementy okna
@@ -321,19 +346,19 @@ public class Main extends Application {
 
 
         upperText = new Text("Skala: 1 - "+scale+" px | Prędkość: " + speed + " ms");
-        upperText.setFill(Color.WHITE);
+        upperText.setFill(textColor);
         upperText.setFont(Font.font("Verdana",20));
         upperText.setX(420);
         upperText.setY(40);
 
-        Text xLetter = new Text("x");
-        xLetter.setFill(Color.WHITE);
+        xLetter = new Text("x");
+        xLetter.setFill(linesColor);
         xLetter.setFont(Font.font("Monospaced",15));
         xLetter.setX(1000);
         xLetter.setY(y0+ 15);
 
-        Text yLetter = new Text("y");
-        yLetter.setFill(Color.WHITE);
+        yLetter = new Text("y");
+        yLetter.setFill(linesColor);
         yLetter.setFont(Font.font("Monospaced",15));
         yLetter.setX(x0-15);
         yLetter.setY(yLine.getY()+10);
@@ -686,11 +711,55 @@ public class Main extends Application {
 
         });
 
+        darkDesignOpt = new CheckBox("Ciemny");
+
+        darkDesignOpt.setSelected(true);
+        darkDesignOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-360);
+        darkDesignOpt.setTranslateY(100);
+        darkDesignOpt.setTextFill(Color.WHITE);
+
+        darkDesignOpt.setOnMouseClicked(e->{
+            if (!paleDesignOpt.isSelected()){
+                paleDesignOpt.setSelected(true);
+                repaintDesingn("white");
+            } else{
+                paleDesignOpt.setSelected(false);
+                repaintDesingn("black");
+            }
+        });
+
+        paleDesignOpt = new CheckBox("Jasny");
+
+        paleDesignOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-360);
+        paleDesignOpt.setTranslateY(130);
+        paleDesignOpt.setTextFill(Color.WHITE);
+
+        paleDesignOpt.setOnMouseClicked(e->{
+            if (!darkDesignOpt.isSelected()) {
+                darkDesignOpt.setSelected(true);
+                repaintDesingn("black");
+            } else{
+                darkDesignOpt.setSelected(false);
+                repaintDesingn("white");
+            }
+        });
+
+        backToMenuButton = new Button("X");
+        backToMenuButton.setId("backToMenuButton");
+        backToMenuButton.setTranslateX(10);
+        backToMenuButton.setTranslateY(10);
+        backToMenuButton.setPrefWidth(10);
+        backToMenuButton.setPrefHeight(10);
+        backToMenuButton.setOnMouseClicked(e->{
+            menu.showMenu();
+        });
+
         root.getChildren().add(hamburger);
         root.getChildren().add(hamburgerOverlay);
         root.getChildren().add(bin);
         root.getChildren().add(binOverlay);
         root.getChildren().add(upperText);
+        root.getChildren().add(backToMenuButton);
 
         root.getChildren().add(xLine);
         root.getChildren().add(yLine);
@@ -706,10 +775,10 @@ public class Main extends Application {
         Rectangle point;
 
         if(blankPoint){
-            point = new Rectangle(pointSize, 2 , Color.WHITE);
+            point = new Rectangle(pointSize, 2 , pointColor);
             blankPoint = false;
         }
-        else point = new Rectangle(pointSize, pointSize , Color.YELLOW);
+        else point = new Rectangle(pointSize, pointSize , pointColor);
 
         point.setX(x);
         point.setY(y);
@@ -719,21 +788,21 @@ public class Main extends Application {
     }
 
     private void initPointLines(double x, double y){
-        Rectangle lineX = new Rectangle(x-50, 1 , Color.WHITE);
+        Rectangle lineX = new Rectangle(x-50, 1 , linesColor);
 
         Rectangle lineY;
         if(y<=y0) {
-            lineY = new Rectangle(1, y0 - y, Color.WHITE);
+            lineY = new Rectangle(1, y0 - y, linesColor);
         } else {
-            lineY = new Rectangle(1, y-y0, Color.WHITE);
+            lineY = new Rectangle(1, y-y0, linesColor);
         }
 
 
         Text tX = new Text(""+(int)xn);
         Text tY = new Text(""+(double)Math.round(fx * 100d) / 100d);
 
-        tX.setFill(Color.WHITE);
-        tY.setFill(Color.WHITE);
+        tX.setFill(textColor);
+        tY.setFill(textColor);
 
         tX.setFont(Font.font("Monospaced",10));
         tY.setFont(Font.font("Monospaced",10));
@@ -812,8 +881,7 @@ public class Main extends Application {
                     return 0;
                 }
             } catch (ScriptException e1) {
-                JOptionPane.showMessageDialog(null,"Program nie poradził sobie z tym równaniem.","Błąd",JOptionPane.WARNING_MESSAGE);
-                System.exit(0);
+
             }
         }
 
@@ -913,19 +981,50 @@ public class Main extends Application {
         toolsTxt.setY(80);
         toolsTxt.setFill(Color.WHITE);
 
+        Text designsTxt = new Text("Motyw:");
+        designsTxt.setFont(Font.font("Verdana",17));
+        designsTxt.setX(toolsTxt.getX()-180);
+        designsTxt.setY(80);
+        designsTxt.setFill(Color.WHITE);
+
+        Text commandsTxt = new Text("Komendy:");
+        commandsTxt.setFont(Font.font("Verdana",17));
+        commandsTxt.setX(optionsPanel.getX()+20);
+        commandsTxt.setY(80);
+        commandsTxt.setFill(Color.WHITE);
+
+        Text commandsContent = new Text("\nsin n - sin(n) | cos n - cos(n) | tg n - tg(n) | log n - log(n)\n\n" +
+                                        "n² - pow(n,2)   | √n - sqrt(n)    | |n| - abs(n)");
+        commandsContent.setFont(Font.font("Verdana",13));
+        commandsContent.setX(optionsPanel.getX()+20);
+        commandsContent.setY(100);
+        commandsContent.setFill(Color.WHITE);
+
         root.getChildren().add(optionsPanel);
         root.getChildren().add(title);
         root.getChildren().add(toolsTxt);
+        root.getChildren().add(designsTxt);
+        root.getChildren().add(commandsTxt);
+        root.getChildren().add(commandsContent);
         root.getChildren().add(zbOpt);
         root.getChildren().add(rozbPOpt);
         root.getChildren().add(rozbMOpt);
+        root.getChildren().add(darkDesignOpt);
+        root.getChildren().add(paleDesignOpt);
+
 
         optionsPanelElements.add(optionsPanel);
         optionsPanelElements.add(title);
         optionsPanelElements.add(toolsTxt);
+        optionsPanelElements.add(designsTxt);
+        optionsPanelElements.add(commandsTxt);
+        optionsPanelElements.add(commandsContent);
         optionsPanelElements.add(zbOpt);
         optionsPanelElements.add(rozbPOpt);
         optionsPanelElements.add(rozbMOpt);
+        optionsPanelElements.add(darkDesignOpt);
+        optionsPanelElements.add(paleDesignOpt);
+
     }
 
     private void removeOptionsPanel(){
@@ -1093,4 +1192,54 @@ public class Main extends Application {
         deltaLetter.setX(deltaLine.getX()-3);
         deltaLetter.setY(deltaLine.getY()+deltaLine.getHeight()+20);
     }
+
+    private void repaintDesingn(String type){
+
+        if(isAnimating){
+            stopAnimating();
+        }
+        tidyTheBoard();
+
+        switch(type){
+            case "white":
+
+                linesColor = Color.BLACK;
+                backgroundColor = Color.WHITE;
+                textColor = Color.BLACK;
+                pointColor = Color.RED;
+
+                hamburger.setImage(new Image("img/option icon2.png"));
+                bin.setImage(new Image("img/bin icon2.png"));
+
+                upperText.setFill(textColor);
+                xLine.setFill(linesColor);
+                yLine.setFill(linesColor);
+                xLetter.setFill(textColor);
+                yLetter.setFill(textColor);
+
+                background.setFill(backgroundColor);
+
+
+                break;
+            case "black":
+
+                linesColor = Color.WHITE;
+                backgroundColor = Color.BLACK;
+                textColor = Color.WHITE;
+                pointColor = Color.YELLOW;
+
+                upperText.setFill(textColor);
+                hamburger.setImage(new Image("img/options icon.png"));
+                bin.setImage(new Image("img/bin icon.jpg"));
+                xLine.setFill(linesColor);
+                yLine.setFill(linesColor);
+                xLetter.setFill(textColor);
+                yLetter.setFill(textColor);
+
+                background.setFill(backgroundColor);
+                break;
+            default:
+        }
+    }
+
 }

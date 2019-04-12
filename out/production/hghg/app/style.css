@@ -21,6 +21,11 @@
     -fx-text-fill: #eeeeee;
 }
 
+#backToMenuButton:hover{
+    -fx-background-color: #ef2832;
+
+}
+
 .check-box {
     -fx-font-size: 13;
     -fx-font-weight: bold;
