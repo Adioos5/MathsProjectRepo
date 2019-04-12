@@ -7,6 +7,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -58,6 +59,10 @@ public class Main extends Application {
     private Button drawButton;
     private Button scaleButton;
     private Button speedButton;
+
+    private CheckBox zbOpt;
+    private CheckBox rozbPOpt;
+    private CheckBox rozbMOpt;
 
     private int scale = 15;
     private int speed = 50;
@@ -142,8 +147,6 @@ public class Main extends Application {
             }
         };
 
-        timer.start();
-
         //background
         root.getChildren().add(new Rectangle(1200,600, Color.BLACK));
 
@@ -159,6 +162,27 @@ public class Main extends Application {
         optionsPanel.setX(150);
         optionsPanel.setY(0);
 
+        root.setOnMouseClicked(e->{
+            if(root.getChildren().contains(optionsPanel) && !new Rectangle(e.getX(),e.getY(),1,1).intersects(new Rectangle(optionsPanel.getX(),optionsPanel.getY(),optionsPanel.getWidth()+300,optionsPanel.getHeight()).getBoundsInParent())){
+                removeOptionsPanel();
+                addUI();
+            }
+        });
+
+        root.setOnMousePressed(e->{
+            if(root.getChildren().contains(optionsPanel) && !new Rectangle(e.getX(),e.getY(),1,1).intersects(new Rectangle(optionsPanel.getX(),optionsPanel.getY(),optionsPanel.getWidth()+300,optionsPanel.getHeight()).getBoundsInParent())){
+                removeOptionsPanel();
+                addUI();
+            }
+        });
+
+        root.setOnMouseDragged(e->{
+            if(root.getChildren().contains(optionsPanel) && !new Rectangle(e.getX(),e.getY(),1,1).intersects(new Rectangle(optionsPanel.getX(),optionsPanel.getY(),optionsPanel.getWidth()+300,optionsPanel.getHeight()).getBoundsInParent())){
+                removeOptionsPanel();
+                addUI();
+            }
+        });
+
         hamburger = new ImageView(new Image("img/options icon.png"));
         hamburger.setFitWidth(80);
         hamburger.setFitHeight(50);
@@ -166,16 +190,16 @@ public class Main extends Application {
         hamburger.setY(50);
         hamburgerOverlay.setOnMouseClicked(e ->{
 
+            if(isAnimating) {
+                stopAnimating();
+            }
+
             if(!root.getChildren().contains(optionsPanel)){
                 removeUI();
                 generateOptionsPanel();
             } else {
                 addUI();
                 removeOptionsPanel();
-            }
-
-            if(isAnimating) {
-                stopAnimating();
             }
 
         });
@@ -339,6 +363,9 @@ public class Main extends Application {
         limitLine.setX(x0);
         limitLine.setY(y0);
         limitLine.setOnMousePressed(e->{
+
+
+
             if(e.getY()>50 && e.getY()<530) {
                 double distance = limitLine.getY() - epsilonLine1.getY();
                 limitLine.setY(e.getY());
@@ -357,6 +384,7 @@ public class Main extends Application {
             }
         });
         limitLine.setOnMouseDragged(e->{
+
             if(e.getY()>50 && e.getY()<530) {
                 double distance = limitLine.getY() - epsilonLine1.getY();
                 limitLine.setY(e.getY());
@@ -379,6 +407,8 @@ public class Main extends Application {
         epsilonLine1.setX(x0);
         epsilonLine1.setY(limitLine.getY()-50);
         epsilonLine1.setOnMousePressed(e->{
+
+
             if(e.getY()< limitLine.getY() && e.getY()>50){
                 epsilonLine1.setY(e.getY());
                 double distance = limitLine.getY()-epsilonLine1.getY();
@@ -398,6 +428,7 @@ public class Main extends Application {
             }
         });
         epsilonLine1.setOnMouseDragged(e->{
+
             if(e.getY()< limitLine.getY() && e.getY()>50){
                 epsilonLine1.setY(e.getY());
                 double distance = limitLine.getY()-epsilonLine1.getY();
@@ -421,6 +452,9 @@ public class Main extends Application {
         epsilonLine2.setX(x0);
         epsilonLine2.setY(limitLine.getY()+50);
         epsilonLine2.setOnMousePressed(e->{
+
+
+
             if(e.getY()> limitLine.getY() && e.getY()<530){
                 epsilonLine2.setY(e.getY());
                 double distance = epsilonLine2.getY()-limitLine.getY();
@@ -440,6 +474,9 @@ public class Main extends Application {
             }
         });
         epsilonLine2.setOnMouseDragged(e->{
+
+
+
             if(e.getY()> limitLine.getY() && e.getY()<530){
                 epsilonLine2.setY(e.getY());
                 double distance = epsilonLine2.getY()-limitLine.getY();
@@ -501,6 +538,61 @@ public class Main extends Application {
         epsilonArea2.setX(deltaLine.getX());
         epsilonArea2.setY(limitLine.getY());
 
+        zbOpt = new CheckBox("Ciąg zbieżny");
+
+        zbOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-180);
+        zbOpt.setTranslateY(100);
+        zbOpt.setTextFill(Color.WHITE);
+
+        zbOpt.setOnMouseClicked(e->{
+            if(rozbPOpt.isSelected()) {
+                //removeRozbTools();
+                rozbPOpt.setSelected(false);
+            }
+
+            if(rozbMOpt.isSelected()){
+                rozbMOpt.setSelected(false);
+            }
+
+            if(!root.getChildren().contains(deltaLine)) addZbTools();
+            else removeZbTools();
+        });
+
+        rozbPOpt = new CheckBox("Ciąg rozbieżny +∞");
+
+        rozbPOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-180);
+        rozbPOpt.setTranslateY(130);
+        rozbPOpt.setTextFill(Color.WHITE);
+
+        rozbPOpt.setOnMouseClicked(e->{
+            if(zbOpt.isSelected()) {
+                removeZbTools();
+                zbOpt.setSelected(false);
+            }
+
+            if(rozbMOpt.isSelected()){
+                rozbMOpt.setSelected(false);
+            }
+
+        });
+
+        rozbMOpt = new CheckBox("Ciąg rozbieżny -∞");
+
+        rozbMOpt.setTranslateX(optionsPanel.getX()+optionsPanel.getWidth()-180);
+        rozbMOpt.setTranslateY(160);
+        rozbMOpt.setTextFill(Color.WHITE);
+
+        rozbMOpt.setOnMouseClicked(e->{
+            if(zbOpt.isSelected()) {
+                removeZbTools();
+                zbOpt.setSelected(false);
+            }
+            if(rozbPOpt.isSelected()){
+                rozbPOpt.setSelected(false);
+            }
+
+        });
+
         root.getChildren().add(hamburger);
         root.getChildren().add(hamburgerOverlay);
         root.getChildren().add(bin);
@@ -512,21 +604,7 @@ public class Main extends Application {
         root.getChildren().add(xLetter);
         root.getChildren().add(yLetter);
 
-        root.getChildren().add(epsilonLetter1);
-        root.getChildren().add(epsilonLetter2);
-        root.getChildren().add(limitLetter);
-        root.getChildren().add(deltaLetter);
-
-        root.getChildren().add(epsilonDistanceLine2);
-        root.getChildren().add(epsilonDistanceLine1);
-        root.getChildren().add(epsilonArea1);
-        root.getChildren().add(epsilonArea2);
-
-        root.getChildren().add(deltaLine);
-        root.getChildren().add(epsilonLine1);
-        root.getChildren().add(epsilonLine2);
-        root.getChildren().add(limitLine);
-
+        timer.start();
 
         return root;
     }
@@ -730,17 +808,31 @@ public class Main extends Application {
 
     private void generateOptionsPanel(){
 
-        Text txt = new Text("Opcje tablicy:");
-        txt.setFont(Font.font("Verdana",20));
-        txt.setX(optionsPanel.getX()+20);
-        txt.setY(30);
-        txt.setFill(Color.WHITE);
+        Text title = new Text("Opcje tablicy:");
+        title.setFont(Font.font("Verdana",20));
+        title.setX(optionsPanel.getX()+20);
+        title.setY(30);
+        title.setFill(Color.WHITE);
+
+        Text toolsTxt = new Text("Narzędzia:");
+        toolsTxt.setFont(Font.font("Verdana",17));
+        toolsTxt.setX(optionsPanel.getX()+optionsPanel.getWidth()-180);
+        toolsTxt.setY(80);
+        toolsTxt.setFill(Color.WHITE);
 
         root.getChildren().add(optionsPanel);
-        root.getChildren().add(txt);
-        optionsPanelElements.add(optionsPanel);
-        optionsPanelElements.add(txt);
+        root.getChildren().add(title);
+        root.getChildren().add(toolsTxt);
+        root.getChildren().add(zbOpt);
+        root.getChildren().add(rozbPOpt);
+        root.getChildren().add(rozbMOpt);
 
+        optionsPanelElements.add(optionsPanel);
+        optionsPanelElements.add(title);
+        optionsPanelElements.add(toolsTxt);
+        optionsPanelElements.add(zbOpt);
+        optionsPanelElements.add(rozbPOpt);
+        optionsPanelElements.add(rozbMOpt);
     }
 
     private void removeOptionsPanel(){
@@ -751,6 +843,90 @@ public class Main extends Application {
 
         optionsPanelElements.clear();
 
+    }
+
+    private void addZbTools(){
+
+        root.getChildren().add(epsilonLetter1);
+        root.getChildren().add(epsilonLetter2);
+        root.getChildren().add(limitLetter);
+        root.getChildren().add(deltaLetter);
+
+        root.getChildren().add(epsilonDistanceLine2);
+        root.getChildren().add(epsilonDistanceLine1);
+        root.getChildren().add(epsilonArea1);
+        root.getChildren().add(epsilonArea2);
+
+        root.getChildren().add(deltaLine);
+        root.getChildren().add(epsilonLine1);
+        root.getChildren().add(epsilonLine2);
+        root.getChildren().add(limitLine);
+    }
+
+    private void removeZbTools(){
+
+        refreshZbToolsCoordinates();
+
+        root.getChildren().remove(epsilonLetter1);
+        root.getChildren().remove(epsilonLetter2);
+        root.getChildren().remove(limitLetter);
+        root.getChildren().remove(deltaLetter);
+
+        root.getChildren().remove(epsilonDistanceLine2);
+        root.getChildren().remove(epsilonDistanceLine1);
+        root.getChildren().remove(epsilonArea1);
+        root.getChildren().remove(epsilonArea2);
+
+        root.getChildren().remove(deltaLine);
+        root.getChildren().remove(epsilonLine1);
+        root.getChildren().remove(epsilonLine2);
+        root.getChildren().remove(limitLine);
+    }
+
+    private void refreshZbToolsCoordinates(){
+        deltaLine.setX(60);
+        deltaLine.setY(50);
+
+        limitLine.setX(x0);
+        limitLine.setY(y0);
+
+        epsilonLine1.setX(x0);
+        epsilonLine1.setY(limitLine.getY()-50);
+
+        epsilonLine2.setX(x0);
+        epsilonLine2.setY(limitLine.getY()+50);
+
+        epsilonDistanceLine1.setX(limitLine.getX()+limitLine.getWidth()-30);
+        epsilonDistanceLine1.setY(epsilonLine1.getY());
+        epsilonDistanceLine1.setHeight(limitLine.getY()-epsilonLine1.getY());
+
+        epsilonDistanceLine2.setX(limitLine.getX()+limitLine.getWidth()-30);
+        epsilonDistanceLine2.setY(limitLine.getY());
+        epsilonDistanceLine2.setHeight(epsilonLine2.getY()-limitLine.getY());
+
+        limitLetter.setX(limitLine.getX()+limitLine.getWidth()+5);
+        limitLetter.setY(limitLine.getY()+5);
+
+        deltaLetter.setX(deltaLine.getX()-3);
+        deltaLetter.setY(deltaLine.getY()+deltaLine.getHeight()+20);
+
+        epsilonLetter1.setX(limitLine.getX()+limitLine.getWidth()+5);
+        epsilonLetter1.setY(epsilonLine1.getY()+(epsilonDistanceLine1.getHeight()/2));
+
+        epsilonLetter2.setX(limitLine.getX()+limitLine.getWidth()+5);
+        epsilonLetter2.setY(limitLine.getY()+(epsilonDistanceLine2.getHeight()/2));
+
+        epsilonArea1.setX(deltaLine.getX());
+        epsilonArea1.setY(epsilonLine1.getY());
+
+        epsilonArea2.setX(deltaLine.getX());
+        epsilonArea2.setY(limitLine.getY());
+
+        epsilonArea1.setWidth(limitLine.getX()+limitLine.getWidth()-deltaLine.getX());
+        epsilonArea1.setHeight(epsilonDistanceLine1.getHeight());
+
+        epsilonArea2.setWidth(limitLine.getX()+limitLine.getWidth()-deltaLine.getX());
+        epsilonArea2.setHeight(epsilonDistanceLine2.getHeight());
     }
 
 }

@@ -20,3 +20,27 @@
     -fx-background-color: #e5222c;
     -fx-text-fill: #eeeeee;
 }
+
+.check-box {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+}
+
+.check-box .box {
+
+-fx-background-color: white;
+-fx-border-color:grey;
+-fx-border-radius:3px;
+
+}
+
+.check-box:selected .mark {
+
+-fx-background-color: white;
+
+}
+
+.check-box:selected .box {
+
+-fx-background-color: #28a3f4;
+}
