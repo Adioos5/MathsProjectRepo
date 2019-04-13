@@ -296,9 +296,14 @@ public class Board {
             ((Node) e.getSource()).setCursor(Cursor.HAND);
         });
         scaleButton.setOnMouseClicked(e -> {
-            scale = Integer.parseInt(txtArea2.getText());
-            upperText.setText("Skala: 1 - "+scale+" px | Prędkość: " + speed +" ms");
-        });
+            try {
+                scale = Integer.parseInt(txtArea2.getText());
+                upperText.setText("Skala: 1 - " + scale + " px | Prędkość: " + speed + " ms");
+            } catch(Exception ex) {
+                JOptionPane.showMessageDialog(null,"Coś poszło nie tak.","Błąd",JOptionPane.WARNING_MESSAGE);
+                System.exit(0);
+            }
+            });
 
         txtArea3 = new TextArea(""+speed);
         txtArea3.setPrefWidth(120);
@@ -320,8 +325,13 @@ public class Board {
             ((Node) e.getSource()).setCursor(Cursor.HAND);
         });
         speedButton.setOnMouseClicked(e -> {
-            speed = Integer.parseInt(txtArea3.getText());
-            upperText.setText("Skala: 1 - "+scale+" px | Prędkość: " + speed +" ms");
+            try{
+                speed = Integer.parseInt(txtArea3.getText());
+                upperText.setText("Skala: 1 - "+scale+" px | Prędkość: " + speed +" ms");
+            } catch(Exception ex) {
+                JOptionPane.showMessageDialog(null,"Coś poszło nie tak.","Błąd",JOptionPane.WARNING_MESSAGE);
+                System.exit(0);
+            }
         });
 
 
@@ -833,10 +843,15 @@ public class Board {
     }
 
     private String formAnEquation(String equation){
-        String e = equation.replaceAll("\\s+","");
-        e = e.substring(2);
-        e = e.toLowerCase();
-
+        String e = null;
+        try {
+            e = equation.replaceAll("\\s+", "");
+            e = e.substring(2);
+            e = e.toLowerCase();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,"Program nie poradził sobie z tym równaniem.","Błąd",JOptionPane.WARNING_MESSAGE);
+            System.exit(0);
+        }
         return e;
     }
 
@@ -850,7 +865,7 @@ public class Board {
                 replace("cos(", "Math.cos(").
                 replace("tg(", "Math.tan(").
                 replace("sqrt(", "Math.sqrt(").
-                replace("pow(x,", "Math.pow(x,").
+                replace("pow(", "Math.pow(").
                 replace("log(", "Math.log(").
                 replace("abs(", "Math.abs(").
                 replace("x", String.valueOf(x));
@@ -1106,11 +1121,11 @@ public class Board {
 
     private void addRozbPTools(){
 
+        root.getChildren().add(mRectUp);
         root.getChildren().add(mLine);
         root.getChildren().add(mLetter);
         root.getChildren().add(deltaLine);
         root.getChildren().add(deltaLetter);
-        root.getChildren().add(mRectUp);
 
         removeOptionsPanel();
         generateOptionsPanel();
